@@ -489,3 +489,10 @@ body{overflow:hidden}
   .habit-grid{grid-template-columns:1fr}
   .toast{bottom:92px}
 }
+
+.copy{flex:none;text-align:center;font-size:.78rem;font-weight:700;color:var(--ink2);letter-spacing:.2px;opacity:.85}
+.main>.copy{margin-top:-6px}
+.authwrap{flex-direction:column}
+.authwrap .copy{margin-top:22px}
+.authwrap{display:flex;align-items:center;justify-content:center}
+@media(max-width:760px){.main>.copy{margin:6px 0 0}}
