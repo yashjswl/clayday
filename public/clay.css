@@ -497,3 +497,19 @@ body{overflow:hidden}
 .authwrap{display:flex;align-items:center;justify-content:center}
 @media(max-width:760px){.main>.copy{margin:6px 0 0}}
 .auth .top{display:block;animation:none}
+
+/* legibility: dialogs must use the theme's ink (UA default is black), brighter muted text in dark mode */
+dialog{color:var(--ink)}
+.btn{color:var(--ink)}
+.btn.primary{color:#fff}
+.btn.danger{color:#c4365a}
+:root[data-theme="dark"]{--ink:#f4f1ff;--ink2:#bdb8e6}
+:root[data-theme="dark"] .btn.danger{color:#ff9db8}
+:root[data-theme="dark"] .msg.ok{color:#7ff0c4}
+:root[data-theme="dark"] .msg.bad{color:#ff9db8}
+:root[data-theme="dark"] .tag.warn{color:#ff9a78}
+:root[data-theme="dark"] .tag.soon{color:#ffd262}
+:root[data-theme="dark"] .seg button.on,:root[data-theme="dark"] .nav.on,:root[data-theme="dark"] .field a,:root[data-theme="dark"] .linkbtn{color:#cfc6ff}
+:root[data-theme="dark"] ::placeholder{opacity:.8}
+select,option{color:var(--ink)}
+select option{background:var(--card)}
