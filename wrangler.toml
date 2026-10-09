@@ -6,4 +6,4 @@ compatibility_date = "2025-01-01"
 [[d1_databases]]
 binding = "DB"
 database_name = "clayday"
-database_id = "REPLACE_WITH_YOUR_D1_DATABASE_ID"
+database_id = "83bbd2e9-d21a-4b41-bdf8-8d394771e094"
