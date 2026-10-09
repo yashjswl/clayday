@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>clayday · Log in</title>
+<meta name="description" content="clayday: your soft, squishy personal day planner.">
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Fredoka:wght@400;500;600;700&family=Nunito:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/clay.css">
+</head>
+<body>
+<div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+<button class="btn icon-btn theme-fab" id="btnTheme" aria-label="Toggle theme"></button>
+
+<div class="authwrap">
+  <main class="clay auth" id="auth">
+    <div class="top">
+      <div class="avatar"><img src="/favicon.png" alt=""></div>
+      <div data-logo style="--ls:3.6rem"></div>
+      <p class="tag2">Welcome back! Your day is waiting.</p>
+    </div>
+
+    <form id="form" novalidate autocomplete="on">
+      <div class="field">
+        <label for="email">Email</label>
+        <div class="in"><span data-i="mail"></span><input type="text" inputmode="email" id="email" name="email" autocomplete="email" placeholder="you@example.com" autocapitalize="off" spellcheck="false"></div>
+      </div>
+      <div class="field pw-f">
+        <label for="pw">Password</label>
+        <div class="in"><span data-i="lock"></span><input type="password" id="pw" name="password" autocomplete="current-password" placeholder="Your password" maxlength="128">
+          <button type="button" class="eye" id="eye" aria-label="Show password" data-silent></button></div>
+      </div>
+      <div class="err" id="err" role="alert"></div>
+      <button class="btn primary go" id="go" type="submit"><span id="goT">Log in</span></button>
+    </form>
+      <p class="foot">Accounts are created by the admin.<br>Need access? Ask them to add you.</p>
+  </main>
+</div>
+
+<script src="/common.js"></script>
+<script>
+(()=>{
+const $=s=>document.querySelector(s);
+const err=$('#err'),go=$('#go');
+
+// already signed in? skip straight to the app
+fetch('/api/me',{credentials:'same-origin'}).then(r=>{if(r.ok)location.replace('/')}).catch(()=>{});
+
+function setTheme(){const dark=document.documentElement.dataset.theme==='dark';$('#btnTheme').innerHTML=Clay.icon(dark?'sun':'moon')}
+setTheme();
+$('#btnTheme').onclick=()=>{Clay.applyTheme(document.documentElement.dataset.theme==='dark'?'light':'dark');setTheme()};
+
+function showErr(msg){
+  err.classList.remove('show');
+  if(!msg){err.textContent='';return}
+  void err.offsetWidth;err.textContent=msg;err.classList.add('show');Clay.sfx('oops');
+}
+
+/* show / hide password */
+function eye(){const s=$('#pw').type==='text';$('#eye').innerHTML=Clay.icon(s?'eyeoff':'eye');$('#eye').setAttribute('aria-label',s?'Hide password':'Show password')}
+eye();
+$('#eye').onclick=()=>{const p=$('#pw');p.type=p.type==='password'?'text':'password';eye();Clay.sfx('soft')};
+
+$('#form').addEventListener('submit',async e=>{
+  e.preventDefault();
+  const email=$('#email').value.trim(),password=$('#pw').value;
+  if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email))return showErr('Enter a valid email address');
+  if(!password)return showErr('Enter your password');
+  showErr('');go.classList.add('busy');
+  try{
+    const r=await fetch('/api/login',{method:'POST',credentials:'same-origin',headers:{'content-type':'application/json'},body:JSON.stringify({email,password})});
+    let j={};try{j=await r.json()}catch(_){}
+    if(!r.ok){showErr(j.error||'Something went wrong. Please try again.');go.classList.remove('busy');return}
+    Clay.sfx('chime');$('#goT').textContent='Welcome!';
+    setTimeout(()=>location.replace('/'),450);
+  }catch(_){showErr('Can’t reach the server. Check your connection.');go.classList.remove('busy')}
+});
+})();
+</script>
+</body>
+</html>

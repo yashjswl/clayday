@@ -1,0 +1,15 @@
+{
+  "name": "clayday",
+  "private": true,
+  "scripts": {
+    "db:local": "wrangler d1 execute clayday --local --file=schema.sql",
+    "db:remote": "wrangler d1 execute clayday --remote --file=schema.sql",
+    "dev": "wrangler pages dev public",
+    "deploy": "wrangler pages deploy public --project-name clayday",
+    "admin:local": "node scripts/create-admin.mjs local",
+    "admin:remote": "node scripts/create-admin.mjs remote"
+  },
+  "devDependencies": {
+    "wrangler": "^4"
+  }
+}
