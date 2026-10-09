@@ -154,7 +154,7 @@ function placeNow(first){
   const m=new Date().getHours()*60+new Date().getMinutes();
   if(m<H0*60||m>H1*60){n.style.display='none';return}
   n.style.display='';n.style.top=((m-H0*60)*HH/60)+'px';
-  if(first){const tl=$('#tl');if(!tl.dataset.scrolled){tl.dataset.scrolled=1;tl.scrollTo({top:Math.max(0,(m-H0*60)*HH/60-140),behavior:'smooth'})}}
+  if(first){const tl=$('#tl');if(!tl.dataset.scrolled&&tl.clientHeight){tl.dataset.scrolled=1;tl.scrollTo({top:Math.max(0,(m-H0*60)*HH/60-140),behavior:'smooth'})}}
 }
 
 /* ---------- priorities ---------- */
@@ -243,8 +243,8 @@ function renderWater(){
 const QUOTES=[['The secret of getting ahead is getting started.','Mark Twain'],['Small daily improvements lead to stunning results.','Robin Sharma'],['Focus on being productive instead of busy.','Tim Ferriss'],['You don’t have to be great to start, but you have to start to be great.','Zig Ziglar'],['Energy flows where attention goes.','Tony Robbins'],['Done is better than perfect.','Sheryl Sandberg'],['What you do every day matters more than what you do once in a while.','Gretchen Rubin']];
 function renderQuote(){const q=QUOTES[Math.floor(Date.now()/864e5)%QUOTES.length];$('#quote').innerHTML=`“${esc(q[0])}”<small>— ${esc(q[1])}</small>`}
 
-function renderAll(){renderKPIs();renderTimeline();renderPrios();renderTasks();renderHabits();renderEnergy();renderWeek();renderWater();$('#fStat').textContent=`${day().focusSessions} sessions today`;$('#notes').value=S.notes||''}
-function refreshStats(){renderKPIs();renderWeek();renderTasks()}
+function renderAll(){renderHome();renderKPIs();renderTimeline();renderPrios();renderTasks();renderHabits();renderEnergy();renderWeek();renderWater();$('#fStat').textContent=`${day().focusSessions} sessions today`;$('#notes').value=S.notes||''}
+function refreshStats(){renderKPIs();renderWeek();renderTasks();renderHome()}
 
 /* ---------- confetti ---------- */
 function confetti(){
@@ -265,6 +265,7 @@ function drawTimer(){
   $('#pg').style.strokeDashoffset=339.3*(1-tLeft/(tMin*60));
   $('#ring').classList.toggle('run',!!tRun);
   $('#tStart').innerHTML=tRun?`${icon('pause')} Pause`:`${icon('play')} Start`;
+  const ht=$('#hTimer');if(ht)ht.textContent=tRun?`${pad(m)}:${pad(s)}`:'Ready';
   $('#tReset').innerHTML=`${icon('reset')} Reset`;
   document.title=tRun?`${pad(m)}:${pad(s)} · Focus`:'clayday';
 }
@@ -406,6 +407,68 @@ async function loadUsers(){
   }catch(er){$('#userList').innerHTML=`<div class="empty">${esc(er.message)}</div>`}
 }
 
+
+/* ---------- home tiles (live summaries; each one links to its section) ---------- */
+function renderHome(){
+  const d=day(),k=TODAY(),n=new Date(),nowM=n.getHours()*60+n.getMinutes();
+  // schedule
+  const bl=[...d.blocks].sort((x,y)=>x.s-y.s);
+  const next=bl.find(b=>!b.done&&b.e>nowM);
+  let cur=8*60,open=0;bl.forEach(b=>{if(b.s>cur)open+=Math.max(0,Math.min(b.s,20*60)-cur);cur=Math.max(cur,b.e)});if(cur<20*60)open+=20*60-cur;
+  const bd=bl.filter(b=>b.done).length;
+  $('#t-sched').innerHTML=bl.length?`<div class="sub">${next?(next.s<=nowM?'Now':'Up next'):'All wrapped up'}</div>
+    <div class="big">${next?esc(next.t):'Nothing left today'}</div>
+    <div class="sub">${next?`${fmt(next.s)} – ${fmt(next.e)}${next.s>nowM?' · in '+dur(next.s-nowM):''}`:`${bd}/${bl.length} blocks done`}</div>
+    <div style="flex:1"></div><div class="sub">${bl.length} blocks · ${dur(open)} open (8 AM–8 PM)</div>
+    <div class="bar"><i style="width:${bl.length?Math.round(bd/bl.length*100):0}%"></i></div>`
+    :`<div class="empty" style="padding:6px">${icon('cal')}No blocks yet. Open Schedule to plan your day.</div>`;
+  // priorities
+  const filled=d.prio.filter(p=>p.t.trim()),pdone=filled.filter(p=>p.d).length,ppct=filled.length?Math.round(pdone/filled.length*100):0;
+  $('#t-prio').innerHTML=`<div class="rowx"><span class="bignum">${pdone}<span class="sub" style="font-size:1rem">/${filled.length||3}</span></span><span class="sub">done today</span></div>
+    <div class="bar"><i style="width:${ppct}%"></i></div>`+
+    (filled.length?filled.map(p=>`<div class="mini${p.d?' done':''}"><span class="chk${p.d?' on':''}"></span><span class="t">${esc(p.t)}</span></div>`).join(''):`<div class="sub">Set your top 3 for today</div>`);
+  // tasks
+  const openT=S.tasks.filter(t=>!t.done),soon=openT.filter(t=>t.due&&t.due<=dkey(addDays(new Date(),7)));
+  const nextT=[...openT].sort((x,y)=>(x.due||'9').localeCompare(y.due||'9')).slice(0,3);
+  $('#t-task').innerHTML=`<div class="rowx"><span class="bignum">${openT.length}</span><span class="sub">open · ${soon.length} due this week</span></div>`+
+    (nextT.length?nextT.map(t=>`<div class="mini"><span class="t">${esc(t.t)}</span>${dueTag(t.due)}</div>`).join(''):`<div class="sub">You're all caught up</div>`);
+  // habits
+  const hd=S.habits.filter(h=>(S.log[h.id]||{})[k]).length;
+  $('#t-habit').innerHTML=`<div class="rowx"><span class="bignum">${hd}<span class="sub" style="font-size:1rem">/${S.habits.length}</span></span><span class="sub">done today</span></div>
+    <div class="hicons">${S.habits.map(h=>`<span class="hic${(S.log[h.id]||{})[k]?' on':''}" title="${esc(h.n)}">${icon(hIcon(h.e))}</span>`).join('')}</div>`;
+  // energy
+  const en=d.energy,last=en[en.length-1],avg=en.length?(en.reduce((x,y)=>x+y.l,0)/en.length):0;
+  $('#t-energy').innerHTML=last?`<div class="rowx"><span class="bignum" style="color:${ecol(last.l)[1]}">${last.l}</span><span class="sub">/10 at ${esc(last.time)}</span></div>
+    <div class="sub">${en.length} check-in${en.length===1?'':'s'} · avg ${avg.toFixed(1)}</div>${last.note?`<div class="mini"><span class="t">“${esc(last.note)}”</span></div>`:''}`
+    :`<div class="empty" style="padding:6px">${icon('bolt')}No check-in yet. How's your energy?</div>`;
+  // focus & wellness
+  $('#t-focus').innerHTML=`<div class="rowx"><span class="bignum" id="hTimer" style="font-size:2rem">${tRun?`${pad(Math.floor(tLeft/60))}:${pad(tLeft%60)}`:'Ready'}</span></div>
+    <div class="sub">${d.focusSessions} session${d.focusSessions===1?'':'s'} · ${d.focusMin} min today</div>
+    <div class="rowx" style="margin-top:auto"><span style="display:flex;align-items:center;gap:6px;font-weight:800">${icon('drop')}${d.water}/8</span>
+    <span style="display:flex;align-items:center;gap:6px;font-weight:800">${d.mood?icon('m'+d.mood):'<span class="sub">No mood yet</span>'}</span></div>`;
+  // insights
+  const days=[...Array(7)].map((_,i)=>addDays(new Date(),i-6)),vals=days.map(x=>completedOn(dkey(x))),mx=Math.max(3,...vals);
+  $('#t-insight').innerHTML=`<div class="sub">Completed, last 7 days</div><div class="mbars">${vals.map((v,i)=>`<i class="${i===6?'today':''}" style="height:${Math.max(8,v/mx*100)}%"></i>`).join('')}</div>
+    <div class="mini" style="margin-top:auto"><span class="t">${S.notes&&S.notes.trim()?esc(S.notes.trim().split('\n')[0]):'No notes yet'}</span></div>`;
+}
+
+/* ---------- router: sidebar + tiles use #hash links ---------- */
+const VIEWS=['home','schedule','tasks','habits','energy','focus','insights'];
+function show(v){
+  if(!VIEWS.includes(v))v='home';
+  $$('.view').forEach(x=>x.classList.toggle('on',x.dataset.view===v));
+  $$('.nav').forEach(x=>{x.classList.toggle('on',x.dataset.v===v);if(x.dataset.v===v)x.setAttribute('aria-current','page');else x.removeAttribute('aria-current')});
+  if(v==='home'){renderHome();renderKPIs()}
+  if(v==='schedule'){const tl=$('#tl'),m=new Date().getHours()*60+new Date().getMinutes();tl.scrollTo({top:Math.max(0,(m-H0*60)*HH/60-140)})}
+  if(v==='energy')renderEnergy();
+  if(v==='insights')renderWeek();
+}
+addEventListener('hashchange',()=>show(location.hash.slice(1)));
+document.addEventListener('keydown',e=>{
+  if(e.metaKey||e.ctrlKey||e.altKey||/INPUT|TEXTAREA|SELECT/.test(e.target.tagName)||document.querySelector('dialog[open]'))return;
+  const i=+e.key;if(i>=1&&i<=7){location.hash=VIEWS[i-1]}
+});
+
 /* ---------- multi-device sync: pick up newer data when you return to the tab ---------- */
 async function resync(){
   if(dirty||inflight||document.hidden)return;
@@ -427,9 +490,9 @@ addEventListener('pagehide',()=>flush(true));
     return;
   }
   $('#name').textContent=USER.name;$('#whoName').textContent=USER.name.split(' ')[0];
-  applyPrefs();tickClock();renderQuote();wire();renderAll();drawTimer();setSaveState('saved');
+  applyPrefs();tickClock();renderQuote();wire();renderAll();drawTimer();setSaveState('saved');show(location.hash.slice(1));
   $('#splash').classList.add('hide');
-  setInterval(()=>{tickClock();placeNow()},30000);
+  setInterval(()=>{tickClock();placeNow();if($('#v-home').classList.contains('on'))renderHome()},30000);
   let curDay=TODAY();setInterval(()=>{if(TODAY()!==curDay){curDay=TODAY();renderAll()}},60000);
 })();
 })();

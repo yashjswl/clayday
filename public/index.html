@@ -17,125 +17,162 @@
 <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
 <svg width="0" height="0" style="position:absolute"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8fe3c3"/><stop offset="1" stop-color="#8cd0ff"/></linearGradient></defs></svg>
 
-<div class="wrap">
-  <header class="clay">
-    <div class="avatar"><img src="/favicon.png" alt="Avatar"></div>
-    <div class="hello">
-      <div data-logo style="--ls:2.1rem;margin-bottom:6px"></div>
-      <h1 style="font-size:clamp(1.2rem,2.4vw,1.6rem)"><span id="greet">Hello</span>, <span class="nm" id="name"></span> <span class="wave" data-i="spark"></span></h1>
-      <p id="subline"></p>
-    </div>
-    <div class="clock"><div class="t" id="clock"></div><div class="d" id="date"></div><div class="savestate" id="saveState" style="margin-top:8px">Saved</div></div>
-    <div class="hbtns">
-      <button class="btn icon-btn" id="btnSound" title="Toggle sounds" aria-label="Toggle sounds"></button>
-      <button class="btn icon-btn" id="btnTheme" title="Toggle theme" aria-label="Toggle theme"></button>
-      <button class="btn icon-btn" id="btnExport" title="Export data" aria-label="Export data" data-i="dl"></button>
-      <button class="btn icon-btn" id="btnImport" title="Import data" aria-label="Import data" data-i="ul"></button>
+<div class="app">
+  <!-- SIDEBAR: every section, always one click away -->
+  <aside class="side clay" aria-label="Sections">
+    <div class="brand"><div class="avatar"><img src="/favicon.png" alt="Avatar"></div><div data-logo style="--ls:1.9rem"></div></div>
+    <nav id="nav">
+      <a class="nav on" href="#home" data-v="home"><span data-i="home"></span><b>Today</b></a>
+      <a class="nav" href="#schedule" data-v="schedule"><span data-i="cal"></span><b>Schedule</b></a>
+      <a class="nav" href="#tasks" data-v="tasks"><span data-i="check"></span><b>Tasks</b></a>
+      <a class="nav" href="#habits" data-v="habits"><span data-i="flame"></span><b>Habits</b></a>
+      <a class="nav" href="#energy" data-v="energy"><span data-i="bolt"></span><b>Energy</b></a>
+      <a class="nav" href="#focus" data-v="focus"><span data-i="timer"></span><b>Focus</b></a>
+      <a class="nav" href="#insights" data-v="insights"><span data-i="chart"></span><b>Insights</b></a>
+    </nav>
+    <div class="sidefoot">
       <button class="btn who" id="btnAcct" title="Account"><span class="i-wrap" data-i="user"></span><span id="whoName"></span></button>
-      <input type="file" id="file" accept="application/json" hidden>
     </div>
-  </header>
+  </aside>
 
-  <section class="kpis" id="kpis"></section>
+  <div class="main">
+    <header class="top">
+      <div class="hello">
+        <h1><span id="greet">Hello</span>, <span class="nm" id="name"></span> <span class="wave" data-i="spark"></span></h1>
+        <p id="subline"></p>
+      </div>
+      <div class="clock"><div class="t" id="clock"></div><div class="d" id="date"></div></div>
+      <div class="savestate" id="saveState">Saved</div>
+      <div class="hbtns">
+        <button class="btn icon-btn" id="btnSound" title="Toggle sounds" aria-label="Toggle sounds"></button>
+        <button class="btn icon-btn" id="btnTheme" title="Toggle theme" aria-label="Toggle theme"></button>
+        <button class="btn icon-btn" id="btnExport" title="Export data" aria-label="Export data" data-i="dl"></button>
+        <button class="btn icon-btn" id="btnImport" title="Import data" aria-label="Import data" data-i="ul"></button>
+        <input type="file" id="file" accept="application/json" hidden>
+      </div>
+    </header>
 
-  <main class="cols">
-    <!-- LEFT -->
-    <div class="col">
-      <section class="clay card" style="--i:4">
-        <h2><span class="ico" data-i="cal"></span>Today's Timeline<span class="sp"></span><button class="btn sm primary" data-act="addBlock"><span data-i="plus"></span>Block</button></h2>
-        <div class="legend">
-          <span style="--c:var(--purple)">Deep work</span><span style="--c:var(--peach)">Meeting</span><span style="--c:var(--mint)">Break</span><span style="--c:var(--pink)">Personal</span><span style="--c:var(--sky)">Other</span>
+    <div class="views">
+      <!-- HOME -->
+      <section class="view on" id="v-home" data-view="home">
+        <section class="kpis" id="kpis"></section>
+        <div class="tiles">
+          <a class="clay tile" href="#schedule" style="--i:4"><h2><span class="ico" data-i="cal"></span>Schedule</h2><div class="tb" id="t-sched"></div></a>
+          <a class="clay tile" href="#tasks" style="--i:5"><h2><span class="ico" data-i="target"></span>Top 3 Priorities</h2><div class="tb" id="t-prio"></div></a>
+          <a class="clay tile" href="#tasks" style="--i:6"><h2><span class="ico" data-i="check"></span>Tasks &amp; Deadlines</h2><div class="tb" id="t-task"></div></a>
+          <a class="clay tile" href="#habits" style="--i:7"><h2><span class="ico" data-i="flame"></span>Habits</h2><div class="tb" id="t-habit"></div></a>
+          <a class="clay tile" href="#energy" style="--i:8"><h2><span class="ico" data-i="bolt"></span>Energy</h2><div class="tb" id="t-energy"></div></a>
+          <a class="clay tile" href="#focus" style="--i:9"><h2><span class="ico" data-i="timer"></span>Focus &amp; Wellness</h2><div class="tb" id="t-focus"></div></a>
+          <a class="clay tile" href="#insights" style="--i:10"><h2><span class="ico" data-i="chart"></span>Insights &amp; Notes</h2><div class="tb" id="t-insight"></div></a>
+          <a class="clay tile" href="#insights" style="--i:11"><h2><span class="ico" data-i="note"></span>Daily Spark</h2><div class="tb quote" id="quote"></div></a>
         </div>
-        <div class="tl" id="tl"></div>
-      </section>
-    </div>
-
-    <!-- MIDDLE -->
-    <div class="col">
-      <section class="clay card" style="--i:5">
-        <h2><span class="ico" data-i="target"></span>Top 3 Priorities<span class="sp"></span><span class="sub" id="pCount"></span></h2>
-        <div class="barrow"><span class="sub">Daily progress</span><span class="fred" id="pPct">0%</span></div>
-        <div class="bar" style="margin-bottom:18px"><i id="pBar"></i></div>
-        <div id="prios"></div>
       </section>
 
-      <section class="clay card" style="--i:6">
-        <h2><span class="ico" data-i="check"></span>Task Tracker<span class="sp"></span><span class="sub" id="tCount"></span></h2>
-        <form class="addrow" id="taskForm">
-          <input type="text" id="taskText" placeholder="Add a task…" autocomplete="off" aria-label="New task">
-          <input type="date" id="taskDue" title="Due date" aria-label="Due date">
-          <button class="btn primary" type="submit">Add</button>
-        </form>
-        <div class="chips" id="tFilter">
-          <button class="chip on" data-f="all">All</button><button class="chip" data-f="active">Active</button><button class="chip" data-f="done">Done</button>
-        </div>
-        <div class="list" id="tasks"></div>
-      </section>
-
-      <section class="clay card" style="--i:7">
-        <h2><span class="ico" data-i="alarm"></span>Upcoming Deadlines</h2>
-        <div class="list" id="deadlines" style="max-height:230px"></div>
-      </section>
-
-      <section class="clay card" style="--i:8">
-        <h2><span class="ico" data-i="note"></span>Quick Notes <span class="sp"></span><span class="sub" id="noteSaved"></span></h2>
-        <textarea id="notes" placeholder="Brain dump, ideas, reminders…" aria-label="Quick notes"></textarea>
-      </section>
-    </div>
-
-    <!-- RIGHT -->
-    <div class="col">
-      <section class="clay card" style="--i:5">
-        <h2><span class="ico" data-i="flame"></span>Habit Matrix<span class="sp"></span><button class="btn sm" data-act="addHabit"><span data-i="plus" style="color:var(--purple-d)"></span>Habit</button></h2>
-        <div id="habits"></div>
-        <div class="sub" style="margin-top:4px">Tap a circle to log that day · last 7 days</div>
-      </section>
-
-      <section class="clay card" style="--i:6">
-        <h2><span class="ico" data-i="bolt"></span>Energy &amp; Focus Level</h2>
-        <div class="sub" style="margin:0 0 8px 2px">How's your brain feeling right now? (1–10)</div>
-        <div class="scale" id="scale"></div>
-        <div class="addrow" style="margin-bottom:12px">
-          <input type="text" id="eNote" placeholder="Journal snippet… (optional)" autocomplete="off" aria-label="Journal note">
-          <button class="btn primary" data-act="logEnergy">Log</button>
-        </div>
-        <div class="list log" id="eLog" style="max-height:170px;margin-bottom:14px"></div>
-        <div class="sub">7-day average energy</div>
-        <div class="charts" id="eChart"></div>
-      </section>
-
-      <section class="clay card" style="--i:7">
-        <h2><span class="ico" data-i="timer"></span>Focus Timer<span class="sp"></span><span class="sub" id="fStat"></span></h2>
-        <div class="timer">
-          <div class="ring" id="ring">
-            <svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="54" stroke="transparent"/><circle class="pg" id="pg" cx="60" cy="60" r="54"/></svg>
-            <div class="tt" id="tt">25:00</div>
+      <!-- SCHEDULE -->
+      <section class="view" id="v-schedule" data-view="schedule">
+        <div class="clay card full">
+          <h2><span class="ico" data-i="cal"></span>Today's Timeline<span class="sp"></span><button class="btn sm primary" data-act="addBlock"><span data-i="plus"></span>Block</button></h2>
+          <div class="legend">
+            <span style="--c:var(--purple)">Deep work</span><span style="--c:var(--peach)">Meeting</span><span style="--c:var(--mint)">Break</span><span style="--c:var(--pink)">Personal</span><span style="--c:var(--sky)">Other</span>
           </div>
-          <div class="tctl">
+          <div class="tl" id="tl"></div>
+        </div>
+      </section>
+
+      <!-- TASKS -->
+      <section class="view cols3" id="v-tasks" data-view="tasks">
+        <div class="clay card">
+          <h2><span class="ico" data-i="target"></span>Top 3 Priorities<span class="sp"></span><span class="sub" id="pCount"></span></h2>
+          <div class="barrow"><span class="sub">Daily progress</span><span class="fred" id="pPct">0%</span></div>
+          <div class="bar" style="margin-bottom:18px"><i id="pBar"></i></div>
+          <div id="prios"></div>
+        </div>
+        <div class="clay card">
+          <h2><span class="ico" data-i="check"></span>Task Tracker<span class="sp"></span><span class="sub" id="tCount"></span></h2>
+          <form class="addrow" id="taskForm">
+            <input type="text" id="taskText" placeholder="Add a task…" autocomplete="off" aria-label="New task">
+            <input type="date" id="taskDue" title="Due date" aria-label="Due date">
+            <button class="btn primary" type="submit">Add</button>
+          </form>
+          <div class="chips" id="tFilter">
+            <button class="chip on" data-f="all">All</button><button class="chip" data-f="active">Active</button><button class="chip" data-f="done">Done</button>
+          </div>
+          <div class="list" id="tasks"></div>
+        </div>
+        <div class="clay card">
+          <h2><span class="ico" data-i="alarm"></span>Upcoming Deadlines</h2>
+          <div class="list" id="deadlines"></div>
+        </div>
+      </section>
+
+      <!-- HABITS -->
+      <section class="view" id="v-habits" data-view="habits">
+        <div class="clay card full">
+          <h2><span class="ico" data-i="flame"></span>Habit Matrix<span class="sp"></span><button class="btn sm" data-act="addHabit"><span data-i="plus" style="color:var(--purple-d)"></span>Habit</button></h2>
+          <div id="habits" class="habit-grid"></div>
+          <div class="sub" style="margin-top:6px">Tap a circle to log that day · last 7 days · a streak counts consecutive days</div>
+        </div>
+      </section>
+
+      <!-- ENERGY -->
+      <section class="view cols2" id="v-energy" data-view="energy">
+        <div class="clay card">
+          <h2><span class="ico" data-i="bolt"></span>Energy &amp; Focus Level</h2>
+          <div class="sub" style="margin:0 0 8px 2px">How's your brain feeling right now? (1–10)</div>
+          <div class="scale" id="scale"></div>
+          <div class="addrow" style="margin-bottom:0">
+            <input type="text" id="eNote" placeholder="Journal snippet… (optional)" autocomplete="off" aria-label="Journal note">
+            <button class="btn primary" data-act="logEnergy">Log</button>
+          </div>
+          <div class="sub" style="margin-top:18px">7-day average energy</div>
+          <div class="charts" id="eChart"></div>
+        </div>
+        <div class="clay card">
+          <h2><span class="ico" data-i="note"></span>Today's Check-ins</h2>
+          <div class="list log" id="eLog"></div>
+        </div>
+      </section>
+
+      <!-- FOCUS -->
+      <section class="view cols3" id="v-focus" data-view="focus">
+        <div class="clay card">
+          <h2><span class="ico" data-i="timer"></span>Focus Timer<span class="sp"></span><span class="sub" id="fStat"></span></h2>
+          <div class="timer">
+            <div class="ring" id="ring">
+              <svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="54" stroke="transparent"/><circle class="pg" id="pg" cx="60" cy="60" r="54"/></svg>
+              <div class="tt" id="tt">25:00</div>
+            </div>
             <div class="presets">
               <button class="chip on" data-min="25">25</button><button class="chip" data-min="50">50</button><button class="chip" data-min="5">5</button>
             </div>
-            <button class="btn primary" id="tStart"></button>
-            <button class="btn" id="tReset"></button>
+            <div class="tbtns"><button class="btn primary" id="tStart"></button><button class="btn" id="tReset"></button></div>
           </div>
+        </div>
+        <div class="clay card">
+          <h2><span class="ico" data-i="drop"></span>Hydration<span class="sp"></span><span class="sub" id="wStat"></span></h2>
+          <div class="glasses" id="glasses"></div>
+        </div>
+        <div class="clay card">
+          <h2><span class="ico" data-i="m4"></span>Today's Mood</h2>
+          <div class="moods" id="moods"></div>
+          <div class="sub" style="margin-top:18px;text-align:center">Tap a face. Tap again to clear.</div>
         </div>
       </section>
 
-      <section class="clay card" style="--i:8">
-        <h2><span class="ico" data-i="drop"></span>Hydration<span class="sp"></span><span class="sub" id="wStat"></span></h2>
-        <div class="glasses" id="glasses"></div>
-        <h2 style="margin-top:22px"><span class="ico" data-i="m4"></span>Today's Mood</h2>
-        <div class="moods" id="moods"></div>
-      </section>
-
-      <section class="clay card" style="--i:9">
-        <h2><span class="ico" data-i="chart"></span>Week at a Glance</h2>
-        <div class="sub">Tasks &amp; priorities completed</div>
-        <div class="charts" id="wChart" style="margin-bottom:18px"></div>
-        <div class="quote" id="quote"></div>
+      <!-- INSIGHTS -->
+      <section class="view cols2" id="v-insights" data-view="insights">
+        <div class="clay card">
+          <h2><span class="ico" data-i="chart"></span>Week at a Glance</h2>
+          <div class="sub">Tasks &amp; priorities completed</div>
+          <div class="charts grow" id="wChart"></div>
+        </div>
+        <div class="clay card">
+          <h2><span class="ico" data-i="note"></span>Quick Notes <span class="sp"></span><span class="sub" id="noteSaved"></span></h2>
+          <textarea id="notes" placeholder="Brain dump, ideas, reminders…" aria-label="Quick notes"></textarea>
+        </div>
       </section>
     </div>
-  </main>
+  </div>
 </div>
 
 <dialog id="dlgBlock"><form class="clay form" method="dialog" id="blockForm">
