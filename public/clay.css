@@ -513,3 +513,12 @@ dialog{color:var(--ink)}
 :root[data-theme="dark"] ::placeholder{opacity:.8}
 select,option{color:var(--ink)}
 select option{background:var(--card)}
+
+.pd{font-family:'Fredoka';font-size:.74rem;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--ink2);margin-top:-4px}
+.pd-h{margin:0;display:flex;flex-direction:column;align-items:center;gap:2px}
+.pd-sub{font-family:'Fredoka';font-size:.95rem;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:var(--ink2)}
+@media(max-width:1180px){.pd{display:none}}
+
+.blk.short{flex-direction:row;align-items:center;gap:10px;padding:3px 40px 3px 14px}
+.blk.short b{flex:0 1 auto}.blk.short small{white-space:nowrap}
+.blk.short{justify-content:flex-start}

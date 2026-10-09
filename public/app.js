@@ -142,7 +142,7 @@ function renderTimeline(){
   if(cur<20*60)slot(cur,20*60);
   bl.forEach(b=>{
     const hgt=Math.max(30,top(b.e)-top(b.s)-4);
-    body+=`<div class="blk ${b.k}${b.done?' done':''}" data-act="blk" data-id="${b.id}" data-on="${b.done?1:0}" style="top:${top(b.s)+2}px;height:${hgt}px;animation-delay:${i++*60}ms"><b>${esc(b.t)}</b><small>${fmt(b.s)} – ${fmt(b.e)} · ${dur(b.e-b.s)}</small><button class="x" data-act="delBlock" data-silent data-id="${b.id}" title="Delete" aria-label="Delete block">${icon('x')}</button></div>`;
+    body+=`<div class="blk ${b.k}${b.done?' done':''}${hgt<58?' short':''}" data-act="blk" data-id="${b.id}" data-on="${b.done?1:0}" style="top:${top(b.s)+2}px;height:${hgt}px;animation-delay:${i++*60}ms"><b>${esc(b.t)}</b><small>${fmt(b.s)} – ${fmt(b.e)} · ${dur(b.e-b.s)}</small><button class="x" data-act="delBlock" data-silent data-id="${b.id}" title="Delete" aria-label="Delete block">${icon('x')}</button></div>`;
   });
   const keep=el.scrollTop;
   el.innerHTML=`<div style="position:relative">${h}<div class="tlbody" style="height:${(H1-H0)*HH}px">${body}<div class="now" id="now"></div></div></div>`;
@@ -267,7 +267,7 @@ function drawTimer(){
   $('#tStart').innerHTML=tRun?`${icon('pause')} Pause`:`${icon('play')} Start`;
   const ht=$('#hTimer');if(ht)ht.textContent=tRun?`${pad(m)}:${pad(s)}`:'Ready';
   $('#tReset').innerHTML=`${icon('reset')} Reset`;
-  document.title=tRun?`${pad(m)}:${pad(s)} · Focus`:'clayday';
+  document.title=tRun?`${pad(m)}:${pad(s)} · Focus`:'clayday - Personal Dashboard';
 }
 function timerDone(){
   clearInterval(tRun);tRun=null;
